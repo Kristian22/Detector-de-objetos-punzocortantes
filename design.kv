@@ -1,0 +1,220 @@
+#:kivy 2.3.1
+#:import RiseInTransition kivy.uix.screenmanager.RiseInTransition
+#:import SlideTransition kivy.uix.screenmanager.SlideTransition
+
+<ElementCard@MDCard>:
+    radius: '10dp'
+    spacing: '10dp'
+    padding: '10dp'
+    image: ''
+    text: ''
+    sub_text: ''
+    orientation: 'vertical'
+    ripple_behavior: True
+    
+    Image: 
+        source: root.image
+    MDBoxLayout:
+        orientation: 'vertical'
+        MDLabel: 
+            text: root.text
+            halign: 'center'
+        MDLabel:
+            text: root.sub_text
+            halign: 'center'
+            theme_text_color: "Secondary"
+            font_style: "Caption"
+
+<PantallaPersonalizada>:
+    orientation: 'vertical'
+    text: ''
+    xml_path: ''
+    padding: '10dp'
+    spacing: '10dp'
+
+    MDLabel:
+        text: root.text
+        halign: 'center'
+        size_hint_y: 0.1
+        font_style: 'H5'
+
+    KivyCamera:
+        id: qrcam
+        model_file: root.xml_path
+        allow_stretch: True
+
+    MDBoxLayout:
+        orientation: 'horizontal'
+        size_hint_y: None
+        height: '50dp'
+        spacing: '10dp'
+        MDFillRoundFlatButton:
+            text: 'ENCENDER'
+            on_release: qrcam.start()
+        MDFillRoundFlatButton:
+            text: 'APAGAR'
+            on_release: qrcam.stop()
+
+    MDFillRoundFlatButton:
+        text: 'Regresar'
+        pos_hint: {'center_x': 0.5}
+        on_release: 
+            qrcam.stop()
+            app.root.current = 'screen_principal'
+            app.root.transition = SlideTransition(direction='right')
+
+<PantallaInfo>:
+    orientation: 'vertical'
+    md_bg_color: 0.0, 0.0, 0.0, 1  # Color gris oscuro para que no sea negro total
+    padding: "20dp"
+    spacing: "20dp"
+
+    MDLabel:
+        text: root.titulo
+        halign: "center"
+        font_style: "H4"
+        theme_text_color: "Primary"
+        size_hint_y: 0.2
+
+    MDSeparator:
+
+    ScrollView:
+        MDLabel:
+            text: root.contenido
+            halign: "center"
+            theme_text_color: "Secondary"
+            size_hint_y: None
+            height: self.texture_size[1]
+            font_style: "H6"
+
+    MDFillRoundFlatButton:
+        text: "VOLVER"
+        pos_hint: {"center_x": .5}
+        on_release: 
+            app.root.current = 'screen_principal'
+            app.root.transition.direction = 'right'
+
+<UI>:
+    MDScreen:
+        name: 'screen_principal'
+        md_bg_color: 0, 0.5, 0.5, 1
+        
+        MDBoxLayout:
+            orientation: 'vertical'
+            
+            MDBoxLayout:
+                size_hint_y: None
+                height: "65dp"
+                padding: "10dp"
+                MDLabel:
+                    text: "Detector de objetos punzocortantes"
+                    halign: 'left'
+                    font_style: 'H5'
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                MDSwitch:
+                    pos_hint: {'center_y': 0.5}
+                    on_active: app.change_style(*args)
+
+            ScrollView:
+                do_scroll_x: False
+                MDBoxLayout:
+                    id: container
+                    orientation: 'vertical'
+                    adaptive_height: True  
+                    padding: '15dp'
+                    spacing: '20dp'
+
+                    MDLabel:
+                        text: "MÓDULOS DE VISIÓN"
+                        font_style: "Button"
+                        theme_text_color: "Custom"
+                        text_color: 1, 1, 1, 0.7
+                        size_hint_y: None
+                        height: self.texture_size[1]
+
+                    MDGridLayout:
+                        cols: 3
+                        row_default_height: '120dp'
+                        row_force_default: True
+                        size_hint_y: None
+                        height: self.minimum_height
+                        spacing: '10dp'
+
+                        ElementCard:
+                            text: 'Cuchillos'
+                            image: 'imgs/cuchillo.png'
+                            on_release: root.current = 'Cuchillos'
+                        ElementCard:
+                            text: 'Tijeras'
+                            image: 'imgs/tijeras.png'
+                            on_release: root.current = 'Tijeras'
+                        ElementCard:
+                            text: 'Punzantes'
+                            image: 'imgs/punzante.png'
+                            on_release: root.current = 'Punzantes'
+
+                    
+                    MDLabel:
+                        text: "INFORMACIÓN Y ALERTAS"
+                        font_style: "Button"
+                        theme_text_color: "Custom"
+                        text_color: 1, 1, 1, 0.7
+                        size_hint_y: None
+                        height: self.texture_size[1]
+
+                    MDGridLayout:
+                        cols: 3
+                        row_default_height: '120dp'
+                        row_force_default: True
+                        size_hint_y: None
+                        height: self.minimum_height
+                        spacing: '10dp'
+
+                        ElementCard:
+                            text: 'Info Cuchillos'
+                            image: 'imgs/cuchillo2.png'
+                            on_release: root.current = 'info_cuchillo'
+                        ElementCard:
+                            text: 'Info Tijeras'
+                            image: 'imgs/tijeras2.png'
+                            on_release: root.current = 'info_tijeras'
+                        ElementCard:
+                            text: 'Info Punzantes'
+                            image: 'imgs/punzante2.png'
+                            on_release: root.current = 'info_punzante'
+    MDScreen:
+        name: 'Cuchillos'
+        PantallaPersonalizada:
+            text: 'Detector de Cuchillos'
+            xml_path: 'cascadeKnife.xml' 
+
+    MDScreen:
+        name: 'Tijeras'
+        PantallaPersonalizada:
+            text: 'Detector de Tijeras'
+            xml_path: 'cascadeScissors.xml'
+            
+    MDScreen:
+        name: 'Punzantes'
+        PantallaPersonalizada:
+            text: 'Objetos Punzantes'
+            xml_path: 'cascadeKnife.xml' # Cambiar para punzantes
+    
+    MDScreen:
+        name: 'info_cuchillo'
+        PantallaInfo:
+            titulo: "MEDIDIAS DE SEGURIDAD"
+            contenido: "1. Siempre toma el objeto por el mango, por ningun motivo lo tomes por la hoja. \n2. Asegure el área colocando el cuchillo en un lugar sin riesgo. \n3. En caso de ser menor, notifique a las autoridades para manejar la situación."
+
+    MDScreen:
+        name: 'info_tijeras'
+        PantallaInfo:
+            titulo: "MEDIDAS DE SEGURIDAD"
+            contenido: "Policía: 911\nSeguridad Privada: Ext. 404\nAmbulancia: 555-0199"
+
+    MDScreen:
+        name: 'info_punzante'
+        PantallaInfo:
+            titulo: "MEDIDAS DE SEGURIDAD"
+            contenido: "De acuerdo con el artículo 45, la portación de objetos punzantes en áreas públicas está restringida..."
