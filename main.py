@@ -31,7 +31,7 @@ class KivyCamera(Image):
         self.detector = None
 
     def start(self):
-        # Cargamos el clasificador justo antes de iniciar la cámara
+        # Cargar clasificador antes de iniciar cámara
         if self.model_file:
             self.detector = cv2.CascadeClassifier(self.model_file)
 
@@ -44,21 +44,20 @@ class KivyCamera(Image):
             Clock.unschedule(self.update)
             self.capture.release()
             self.capture = None
-            self.texture = None  # Limpia la pantalla al salir
+            self.texture = None
 
     def update(self, dt):
         ret, frame = self.capture.read()
         if ret and self.detector:
-            # Los Cascades funcionan mejor en escala de grises
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-            # Detectar objetos (ajusta scaleFactor si es muy sensible)
+            # Detecteccion de objetos
             objetos = self.detector.detectMultiScale(
-                gray, scaleFactor=1.1, minNeighbors=12, minSize=(100, 100)
+                gray, scaleFactor=1.1, minNeighbors=15, minSize=(190, 140)
             )
 
             for x, y, w, h in objetos:
-                # Dibujamos el cuadro en el frame original (color)
+                # Dibujo del cuadro en el frame
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 cv2.putText(
                     frame,
